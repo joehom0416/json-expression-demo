@@ -2,7 +2,7 @@
 
 An interactive browser-based playground for testing [`@nanotiny/json-expression`](https://www.npmjs.com/package/@nanotiny/json-expression) queries.
 
-**[Live Demo](https://joehom0416.github.io/nanotiny-json-expression-webtester/)**
+**[Live Demo](https://joehom0416.github.io/json-expression-demo/)**
 
 ## Features
 

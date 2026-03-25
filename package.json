@@ -11,7 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@nanotiny/json-expression": "^0.0.8",
+    "@nanotiny/json-expression": "^0.0.9",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-markdown": "^10.1.0",

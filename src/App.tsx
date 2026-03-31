@@ -1,3 +1,5 @@
+declare const __JSON_EXPRESSION_VERSION__: string
+
 import { useState } from 'react'
 import './App.css'
 import { sampleData } from './data/sampleData'
@@ -37,7 +39,7 @@ export default function App() {
     <div className="app-root">
       <header className="app-header">
         <h1>@nanotiny/json-expression</h1>
-        <span className="version-badge">Web Tester</span>
+        <span className="version-badge">v{__JSON_EXPRESSION_VERSION__}</span>
         <button
           className="btn btn-secondary"
           style={{ marginLeft: 'auto', fontSize: 12 }}

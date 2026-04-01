@@ -167,7 +167,7 @@ evaluate(data, '[version == "1.0" || status == "active"] && metadata.settings.ma
 | `<=`            | Less than or equal               | `rating <= 4.5`                              |
 | `in`            | Value is in a list               | `department in "Engineering,Sales"`          |
 | `not in`        | Value is not in a list           | `type not in "limited"`                      |
-| `like`          | Pattern match (wildcard)         | `name like "Acme%"`                          |
+| `like`          | SQL-style pattern match          | `name like "Acme%"`, `name like "J_hn"`      |
 | `not like`      | Pattern does not match           | `name not like "%Corp%"`                     |
 | `contains`      | String contains substring        | `email contains "acme.com"`                  |
 | `startswith`    | String starts with               | `name startswith "Tech"`                     |
@@ -175,6 +175,37 @@ evaluate(data, '[version == "1.0" || status == "active"] && metadata.settings.ma
 | `is null`       | Value is null or missing         | `description is null`                        |
 | `is not null`   | Value is not null                | `description is not null`                    |
 | `between`       | Value is between two values      | `salary between 90000 and 130000`            |
+
+### SQL-Style Pattern Matching (`like` / `not like`)
+
+The `like` and `not like` operators support SQL-style wildcards:
+
+| Wildcard | Meaning                | Example              | Matches                    |
+|----------|------------------------|----------------------|----------------------------|
+| `%`      | Any sequence of chars  | `name like "Acme%"`  | "Acme Corporation", "Acme" |
+| `_`      | Exactly one character  | `name like "J_hn"`   | "John", "Jahn"             |
+
+Wildcards can be combined:
+
+```ts
+// Starts with "Tech"
+query(data, 'companies.name | name like "Tech%"');
+// → 'Tech Solutions Ltd'
+
+// Contains "Corp" anywhere
+query(data, 'companies.name | name like "%Corp%"');
+// → 'Acme Corporation'
+
+// Single-character wildcard
+query(data, 'employees.name | name like "J_hn%"');
+// → 'John Doe'
+
+// Negated pattern
+query(data, 'companies.name | name not like "%Corp%"');
+// → 'Tech Solutions Ltd'
+```
+
+> Pattern matching is **case-insensitive**.
 
 ---
 

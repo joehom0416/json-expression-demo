@@ -40,10 +40,11 @@ export const SHORTCUT_CATEGORIES: ShortcutCategory[] = [
       { label: "endswith", snippet: ' | email endswith ".com"', description: "Ends with suffix" },
       { label: "is null", snippet: " | description is null", description: "Null or missing value" },
       { label: "is not null", snippet: " | description is not null", description: "Non-null value" },
-      { label: "between", snippet: " | salary between 90000,130000", description: "Value in range" },
+      { label: "between", snippet: " | salary between 90000 and 130000", description: "Value in range" },
       { label: "$index", snippet: " | $index == 0", description: "Filter by array index" },
       { label: "&& AND", snippet: ' | type == "corporation" && isActive == true', description: "AND condition" },
       { label: "|| OR", snippet: ' | type == "limited" || id == "company3"', description: "OR condition" },
+      { label: "[] group", snippet: ' | [type == "limited" || type == "corporation"] && isActive == false', description: "Explicit boolean grouping" },
     ],
   },
   {

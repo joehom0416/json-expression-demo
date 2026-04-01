@@ -115,7 +115,7 @@ The filter condition uses the same field names that exist in each array element 
 
 ### Multiple Conditions
 
-Combine conditions with `&&` (AND) or `||` (OR). Conditions are evaluated left to right with equal precedence — no grouping with parentheses.
+Combine conditions with `&&` (AND) or `||` (OR). Conditions are evaluated left to right with equal precedence.
 
 ```ts
 // AND: both must match
@@ -131,7 +131,27 @@ query(data, 'employees.name | department == "Engineering" && isRemote == "false"
 // → 'John Doe'
 ```
 
-> **Limitation:** The tokeniser splits on `&&` and `||` unconditionally, so string values that literally contain those sequences inside a quoted right-hand side (e.g. `name == "foo && bar"`) will not parse correctly.
+### Explicit Boolean Grouping with `[]`
+
+Use `[` and `]` when you want to force a particular boolean grouping.
+
+```ts
+query(data, 'companies.name | [type == "limited" || type == "corporation"] && isActive == "false"');
+// → 'Global Innovations Corp'
+
+query(data, 'companies.name | [id == (employees.companyId | id == "emp1") || id == "company2"]');
+// → 'Acme Corporation'
+
+evaluate(data, '[version == "1.0" || status == "active"] && metadata.settings.maxRetries == 5');
+// → true
+```
+
+> **Notes:**
+> - Quoted string values can include literal `&&` or `||` (for example `name == "foo && bar"`). Those sequences are only treated as boolean operators when they appear outside quoted values.
+> - Using multiple `|` delimiters in one query (e.g. `path | cond1 | cond2`) throws an `Error` at parse time. Use `&&` or `||` inside a single filter instead.
+> - Parentheses `()` are reserved for cross-reference sub-queries, not boolean grouping.
+> - Square brackets `[]` are reserved for explicit boolean grouping.
+> - `||` groups must stay within a single array level in `query()` filters. For example, `id == "company1" || type == "limited"` is fine, but `[id == "company1" || locations.$index == 1]` throws because it mixes company-level and location-level conditions inside one OR group.
 
 ---
 
@@ -154,7 +174,7 @@ query(data, 'employees.name | department == "Engineering" && isRemote == "false"
 | `endswith`      | String ends with                 | `email endswith ".com"`                      |
 | `is null`       | Value is null or missing         | `description is null`                        |
 | `is not null`   | Value is not null                | `description is not null`                    |
-| `between`       | Value is between two values      | `salary between 90000,130000`                |
+| `between`       | Value is between two values      | `salary between 90000 and 130000`            |
 
 ---
 

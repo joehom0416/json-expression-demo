@@ -1,0 +1,49 @@
+name: Update @nanotiny/json-expression
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Check for updates
+        id: check
+        run: |
+          CURRENT=$(node -p "require('./package.json').dependencies['@nanotiny/json-expression'].replace('^', '')")
+          LATEST=$(npm view @nanotiny/json-expression version)
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+          if [ "$CURRENT" != "$LATEST" ]; then
+            echo "has_update=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_update=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update package
+        if: steps.check.outputs.has_update == 'true'
+        run: npm install @nanotiny/json-expression@latest
+
+      - name: Create Pull Request
+        if: steps.check.outputs.has_update == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: 'chore: update @nanotiny/json-expression to ${{ steps.check.outputs.latest }}'
+          title: 'chore: update @nanotiny/json-expression to ${{ steps.check.outputs.latest }}'
+          body: |
+            Automated update of `@nanotiny/json-expression` from `${{ steps.check.outputs.current }}` to `${{ steps.check.outputs.latest }}`.
+          branch: update-json-expression-${{ steps.check.outputs.latest }}
+          delete-branch: true

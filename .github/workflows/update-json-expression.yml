@@ -12,6 +12,8 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    env:
+      CREATE_PR_TOKEN: ${{ secrets.CREATE_PR_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -38,7 +40,7 @@ jobs:
         run: npm install @nanotiny/json-expression@latest
 
       - name: Note PR creation requirements
-        if: steps.check.outputs.has_update == 'true' && secrets.CREATE_PR_TOKEN == ''
+        if: steps.check.outputs.has_update == 'true' && env.CREATE_PR_TOKEN == ''
         run: |
           echo "::notice::If pull request creation fails, either enable the repository setting that allows GitHub Actions to create pull requests or add a CREATE_PR_TOKEN repository secret."
 
@@ -49,7 +51,7 @@ jobs:
           # `GITHUB_TOKEN` can push commits, but opening the PR also requires either:
           # 1. the repository setting that allows GitHub Actions to create PRs, or
           # 2. a PAT stored in the `CREATE_PR_TOKEN` secret.
-          token: ${{ secrets.CREATE_PR_TOKEN != '' && secrets.CREATE_PR_TOKEN || github.token }}
+          token: ${{ env.CREATE_PR_TOKEN || github.token }}
           commit-message: 'chore: update @nanotiny/json-expression to ${{ steps.check.outputs.latest }}'
           title: 'chore: update @nanotiny/json-expression to ${{ steps.check.outputs.latest }}'
           body: |
